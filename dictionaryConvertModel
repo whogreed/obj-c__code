@@ -1,0 +1,68 @@
+- (NSArray *)apps
+{
+    if (_apps == nil) {
+        // 初始化
+        
+        // 1.获得plist的全路径
+        NSString *path = [[NSBundle mainBundle] pathForResource:@"app.plist" ofType:nil];
+        
+        // 2.加载数组
+        NSArray *dictArray = [NSArray arrayWithContentsOfFile:path];
+        
+        // 3.将dictArray里面的所有字典转成模型对象,放到新的数组中
+        NSMutableArray *appArray = [NSMutableArray array];
+        for (NSDictionary *dict in dictArray) {
+            // 3.1.创建模型对象
+//            CJApp *app = [[CJApp alloc] initWithDict:dict]; 不要忘记加载头文件
+            CJApp *app = [CJApp appWithDict:dict];
+            
+            // 3.2.添加模型对象到数组中
+            [appArray addObject:app];
+        }
+        
+        // 4.赋值
+        _apps = appArray;
+    }
+    return _apps;
+}
+
+
+@interface CJApp : NSObject
+/**
+ *  名称
+ */
+@property (nonatomic, copy) NSString *name;
+/**
+ *  图标
+ */
+@property (nonatomic, copy) NSString *icon;
+
+/**
+ *  通过字典来初始化模型对象
+ *
+ *  @param dict 字典对象
+ *
+ *  @return 已经初始化完毕的模型对象
+ */
+- (instancetype)initWithDict:(NSDictionary *)dict;
+
++ (instancetype)appWithDict:(NSDictionary *)dict;
+@end
+
+
+
+@implementation CJApp
+- (instancetype)initWithDict:(NSDictionary *)dict
+{
+    if (self = [super init]) {
+        self.name = dict[@"name"];
+        self.icon = dict[@"icon"];
+    }
+    return self;
+}
+
++ (instancetype)appWithDict:(NSDictionary *)dict
+{
+    return [[self alloc] initWithDict:dict];
+}
+@end
